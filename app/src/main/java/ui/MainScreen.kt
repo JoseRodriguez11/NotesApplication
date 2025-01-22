@@ -1,25 +1,19 @@
-package com.example.note.ui.theme.ui
+package ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,22 +26,22 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
-@Preview
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(){
-
+fun MainScreen( navigateToNoteScreen:(String ,String) -> Unit ){
     Scaffold (
         topBar = {
             Toolbar()
         },
         floatingActionButton = {
-            FloatingButton()
+            FloatingButton( navigateToNoteScreen)
         }
     ){
         Notes()
@@ -90,11 +84,11 @@ fun Toolbar(){
 }
 
 @Composable
-fun FloatingButton(){
-    FloatingActionButton(onClick = {}, contentColor = Color.White, containerColor = Color.Black) {
+fun FloatingButton( navigateToAddNote: (String , String) -> Unit){
+    FloatingActionButton(onClick = { navigateToAddNote ("","")}, contentColor = Color.White, containerColor = Color.Black) {
         Icon(
             imageVector = Icons.Default.Add ,
-            contentDescription = "Add"
+            contentDescription = "Add Note"
 
         )
     }
@@ -102,7 +96,6 @@ fun FloatingButton(){
 
 @Composable
 fun Notes(){
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -114,7 +107,8 @@ fun Notes(){
                 modifier = Modifier
                     .padding(10.dp)
                     .width(150.dp)
-                    .height(150.dp),
+                    .height(150.dp)
+                    .clickable {  },
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 shape = RoundedCornerShape(20.dp),
@@ -124,6 +118,15 @@ fun Notes(){
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp),
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
                     color = Color.Black
                 )
             }
