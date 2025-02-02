@@ -1,23 +1,19 @@
-package ui
+package ui.noteScreen
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,38 +25,41 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import models.Notes
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NoteScreen(title: String, note: String) {
+fun NoteScreen( notes: Notes, viewModel: NoteViewModel = viewModel()) {
+
+    viewModel.passValues(notes)
 
     Scaffold(
         topBar = {
-            ToolbarNotes()
+            ToolbarNotes(viewModel)
         }
 
     ) {
-        ContentNote(title, note)
+        ContentNote( viewModel)
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolbarNotes() {
+fun ToolbarNotes(viewModel: NoteViewModel) {
+
+    val uiState by viewModel.uiState.collectAsState()
+
     TopAppBar(
         title = {
             IconButton(onClick = {}) {
@@ -75,14 +74,27 @@ fun ToolbarNotes() {
         },
 
         actions = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Filled.FavoriteBorder,
-                    contentDescription = null,
-                    tint = Color.Gray,
-                    modifier = Modifier
-                        .size(30.dp)
-                )
+            IconButton(onClick = {
+                viewModel.updateTextField(uiState.title, uiState.note, !uiState.favorite)
+            }) {
+                if (uiState.favorite){
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .size(30.dp)
+                    )
+                }else{
+                    Icon(
+                        imageVector = Icons.Filled.FavoriteBorder,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier
+                            .size(30.dp)
+                    )
+                }
+
             }
         }
     )
@@ -90,11 +102,10 @@ fun ToolbarNotes() {
 
 
 @Composable
-fun ContentNote(title: String, note: String) {
+fun ContentNote(viewModel: NoteViewModel) {
 
-    var note by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
-
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -105,8 +116,8 @@ fun ContentNote(title: String, note: String) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = title,
-            onValueChange = {},
+            value = uiState.title,
+            onValueChange = { viewModel.updateTextField(it, uiState.note, uiState.favorite) },
             label = {
                 Text(
                     text = "Title",
@@ -139,8 +150,8 @@ fun ContentNote(title: String, note: String) {
                 .fillMaxHeight(1f)
                 .verticalScroll(scrollState)
                 .imePadding(),
-            value = note,
-            onValueChange = { note = it },
+            value = uiState.note,
+            onValueChange = { viewModel.updateTextField(uiState.title, it, uiState.favorite) },
             label = {
                 Text(
                     text = "Note",
@@ -166,7 +177,7 @@ fun ContentNote(title: String, note: String) {
         )
 
     }
-    LaunchedEffect(note) {
+    LaunchedEffect(uiState.note) {
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 }

@@ -1,4 +1,4 @@
-package ui
+package ui.mainScreen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -27,24 +27,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import models.Notes
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen( navigateToNoteScreen:(String ,String) -> Unit ){
+fun MainScreen( navigateToNoteScreen:(Notes) -> Unit ){
     Scaffold (
         topBar = {
             Toolbar()
         },
         floatingActionButton = {
+
             FloatingButton( navigateToNoteScreen)
         }
     ){
-        Notes()
+        NoteCard()
     }
 
 
@@ -84,8 +84,9 @@ fun Toolbar(){
 }
 
 @Composable
-fun FloatingButton( navigateToAddNote: (String , String) -> Unit){
-    FloatingActionButton(onClick = { navigateToAddNote ("","")}, contentColor = Color.White, containerColor = Color.Black) {
+fun FloatingButton(navigateToAddNote: (Notes) -> Unit){
+    val defaulNote = Notes("este es el titulo","hola como estas esta es la nota que envio desde navgacio",false)
+    FloatingActionButton(onClick = { navigateToAddNote (defaulNote)}, contentColor = Color.White, containerColor = Color.Black) {
         Icon(
             imageVector = Icons.Default.Add ,
             contentDescription = "Add Note"
@@ -95,11 +96,11 @@ fun FloatingButton( navigateToAddNote: (String , String) -> Unit){
 }
 
 @Composable
-fun Notes(){
+fun NoteCard(){
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
-            .padding(top = 70.dp)
+            .padding(top = 85.dp)
 
     ) {
         item {
