@@ -39,30 +39,40 @@ import models.Notes
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NoteScreen( notes: Notes, viewModel: NoteViewModel = viewModel()) {
+fun NoteScreen(notes: Notes, navigateBack: () -> Unit, viewModel: NoteViewModel = viewModel()) {
 
     viewModel.passValues(notes)
 
     Scaffold(
         topBar = {
-            ToolbarNotes(viewModel)
+            ToolbarNotes(viewModel, navigateBack)
         }
 
     ) {
-        ContentNote( viewModel)
+        ContentNote(viewModel)
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolbarNotes(viewModel: NoteViewModel) {
+fun ToolbarNotes(viewModel: NoteViewModel, navigateBack: () -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
 
     TopAppBar(
         title = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                viewModel.addNote(
+                    Notes(
+                        0,
+                        uiState.title,
+                        uiState.note,
+                        uiState.favorite
+                    )
+                )
+                navigateBack()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
@@ -77,7 +87,7 @@ fun ToolbarNotes(viewModel: NoteViewModel) {
             IconButton(onClick = {
                 viewModel.updateTextField(uiState.title, uiState.note, !uiState.favorite)
             }) {
-                if (uiState.favorite){
+                if (uiState.favorite) {
                     Icon(
                         imageVector = Icons.Filled.Favorite,
                         contentDescription = null,
@@ -85,7 +95,7 @@ fun ToolbarNotes(viewModel: NoteViewModel) {
                         modifier = Modifier
                             .size(30.dp)
                     )
-                }else{
+                } else {
                     Icon(
                         imageVector = Icons.Filled.FavoriteBorder,
                         contentDescription = null,
