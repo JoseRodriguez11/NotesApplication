@@ -21,7 +21,6 @@ class MainScreenViewModel @Inject constructor(
     private val repository: NotesRepository
 ) : ViewModel(){
 
-
     private val _listNotes = MutableStateFlow<List<Notes>>(emptyList())
     val listNotes = _listNotes.asStateFlow()
 

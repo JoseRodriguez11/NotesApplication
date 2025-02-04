@@ -34,12 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import models.Notes
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NoteScreen(notes: Notes, navigateBack: () -> Unit, viewModel: NoteViewModel = viewModel()) {
+fun NoteScreen(notes: Notes, navigateBack: () -> Unit, viewModel: NoteViewModel = hiltViewModel()) {
 
     viewModel.passValues(notes)
 
