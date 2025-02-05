@@ -3,6 +3,7 @@ package ui.mainScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -37,10 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import models.Notes
 
 
@@ -53,14 +53,16 @@ fun MainScreen(
 
     Scaffold(
         topBar = {
-            Toolbar()
+            Toolbar(viewModel)
         },
         floatingActionButton = {
 
             FloatingButton(navigateToNoteScreen)
         }
     ) {
-        NoteCard(viewModel)
+        NoteCard(viewModel, navigateToNoteScreen)
+
+
     }
 
 
@@ -68,13 +70,15 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Toolbar() {
+fun Toolbar(viewModel: MainScreenViewModel) {
     TopAppBar(
         title = {
             Text(text = "Notes", fontSize = 30.sp, color = Color.Black)
         },
         actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                viewModel.getAllNotes()
+            }) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = null,
@@ -83,9 +87,11 @@ fun Toolbar() {
                         .size(30.dp)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                viewModel.getOnlyFavoriteNotes()
+            }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.List,
+                    imageVector = Icons.Default.Favorite,
                     contentDescription = null,
                     tint = Color.Black,
                     modifier = Modifier
@@ -100,14 +106,14 @@ fun Toolbar() {
 
 @Composable
 fun FloatingButton(navigateToAddNote: (Notes) -> Unit) {
-    val defaulNote = Notes(
+    val defaultNote = Notes(
         0,
-        "este es el titulo",
-        "hola como estas esta es la nota que envio desde navgacio",
+        "",
+        "",
         false,
     )
     FloatingActionButton(
-        onClick = { navigateToAddNote(defaulNote) },
+        onClick = { navigateToAddNote(defaultNote) },
         contentColor = Color.White,
         containerColor = Color.Black
     ) {
@@ -120,32 +126,53 @@ fun FloatingButton(navigateToAddNote: (Notes) -> Unit) {
 }
 
 @Composable
-fun NoteCard(viewModel: MainScreenViewModel) {
+fun NoteCard(viewModel: MainScreenViewModel, navigateToNoteScreen: (Notes) -> Unit) {
 
     val notes = viewModel.listNotes.collectAsState().value
+    val listState = viewModel.listState.collectAsState("")
 
+    if (notes.isEmpty()){
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                text = listState.value,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    ,
+                color = Color.Gray,
+                fontSize = 15.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
             .padding(top = 85.dp)
 
     ) {
+
         items(notes) { note ->
-            ItemNote(note = note)
+            ItemNote(note = note, navigateToNoteScreen)
         }
+
 
     }
 
 }
 
 @Composable
-fun ItemNote(note: Notes) {
+fun ItemNote(note: Notes, navigateToNoteScreen: (Notes) -> Unit) {
     Card(
         modifier = Modifier
             .padding(10.dp)
             .width(150.dp)
             .height(150.dp)
-            .clickable { },
+            .clickable { navigateToNoteScreen(note) },
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),

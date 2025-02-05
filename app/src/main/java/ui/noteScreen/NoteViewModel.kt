@@ -1,6 +1,5 @@
 package ui.noteScreen
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.note.ui.theme.repository.NotesRepository
@@ -17,8 +16,6 @@ class NoteViewModel  @Inject constructor(
     private val repository: NotesRepository
 ) : ViewModel() {
 
-/*    private val _listNotes = MutableStateFlow<List<Notes>>(emptyList())
-    val listNotes = _listNotes.asStateFlow()*/
 
     private val _uiState = MutableStateFlow(Notes())
     val uiState: StateFlow<Notes> = _uiState.asStateFlow()
@@ -44,5 +41,8 @@ class NoteViewModel  @Inject constructor(
         repository.addNote(note)
     }
 
+    fun deleteNote(note: Notes) = viewModelScope.launch {
+        repository.deleteNote(note)
+    }
 }
 

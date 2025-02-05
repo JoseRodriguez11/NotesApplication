@@ -16,7 +16,10 @@ class NotesRepository @Inject constructor(
     suspend fun updateNote(note: Notes) = notesDataBaseDao.updateNote(note)
     suspend fun deleteNote(note: Notes) = notesDataBaseDao.deleteNote(note)
 
+
     fun getAllNotes(): Flow<List<Notes>> =
         notesDataBaseDao.getNotes().flowOn(Dispatchers.IO).conflate()
 
+    fun getOnlyFavoriteNote(): Flow<List<Notes>> =
+        notesDataBaseDao.getOnlyFavoriteNotes().flowOn(Dispatchers.IO).conflate()
 }

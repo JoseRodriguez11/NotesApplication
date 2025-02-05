@@ -15,6 +15,9 @@ interface NotesDataBaseDao {
     @Query("SELECT * FROM notes_tbl")
     fun getNotes(): Flow<List<Notes>>
 
+    @Query("SELECT * FROM notes_tbl WHERE favorite = TRUE")
+    fun getOnlyFavoriteNotes(): Flow<List<Notes>>
+
     @Query("SELECT * FROM notes_tbl WHERE id = :id")
     suspend fun getNoteById(id:String): Notes
 
