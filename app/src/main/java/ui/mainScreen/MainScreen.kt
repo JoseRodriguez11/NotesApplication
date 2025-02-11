@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +61,7 @@ fun MainScreen(
             FloatingButton(navigateToNoteScreen)
         }
     ) {
-        NoteCard(viewModel, navigateToNoteScreen)
+        NoteCard(viewModel, navigateToNoteScreen, it)
 
 
     }
@@ -126,7 +127,11 @@ fun FloatingButton(navigateToAddNote: (Notes) -> Unit) {
 }
 
 @Composable
-fun NoteCard(viewModel: MainScreenViewModel, navigateToNoteScreen: (Notes) -> Unit) {
+fun NoteCard(
+    viewModel: MainScreenViewModel,
+    navigateToNoteScreen: (Notes) -> Unit,
+    paddingValues: PaddingValues
+) {
 
     val notes = viewModel.listNotes.collectAsState().value
     val listState = viewModel.listState.collectAsState("")
@@ -152,7 +157,7 @@ fun NoteCard(viewModel: MainScreenViewModel, navigateToNoteScreen: (Notes) -> Un
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
-            .padding(top = 85.dp)
+            .padding(paddingValues)
 
     ) {
 

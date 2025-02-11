@@ -3,6 +3,7 @@ package ui.noteScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -54,7 +54,9 @@ fun NoteScreen(notes: Notes, navigateBack: () -> Unit, viewModel: NoteViewModel 
         }
 
     ) {
-        ContentNote(viewModel)
+
+        ContentNote(viewModel, it)
+
     }
 
 }
@@ -136,7 +138,7 @@ fun ToolbarNotes(viewModel: NoteViewModel, navigateBack: () -> Unit, note: Notes
 
 
 @Composable
-fun ContentNote(viewModel: NoteViewModel) {
+fun ContentNote(viewModel: NoteViewModel, paddingValues: PaddingValues) {
 
     val scrollState = rememberScrollState()
     val uiState by viewModel.uiState.collectAsState()
@@ -144,7 +146,7 @@ fun ContentNote(viewModel: NoteViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 85.dp)
+            .padding(paddingValues)
     ) {
 
         TextField(
